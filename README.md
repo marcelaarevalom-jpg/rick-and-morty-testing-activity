@@ -77,3 +77,39 @@ La forma más sencilla de desplegar esta aplicación es utilizando [Vercel](http
 - [x] Enrutamiento cliente-servidor (Next.js).
 - [x] Diseño Responsive.
 - [x] Loading states y manejo de errores.
+
+## 🧪 Pruebas unitarias con Vitest
+
+Se configuró **Vitest** (con `jsdom` y Testing Library) para probar componentes, funciones utilitarias y lógica de la aplicación siguiendo el patrón **AAA** (Arrange, Act, Assert).
+
+### Comandos
+
+```bash
+npm install            # instala dependencias (incluye Vitest)
+npm test               # modo watch
+npm run test:run       # una sola ejecución
+npx vitest run --coverage   # ejecución + reporte de cobertura (consola y HTML)
+```
+
+### Qué se prueba
+
+| Archivo | Qué valida |
+|---|---|
+| `src/lib/api.test.ts` | `getCharacters`, `getCharacter`, `getEpisodes`: URL correcta, errores de red (`fetch` simulado con `vi.stubGlobal`) y el caso en que la API devuelve un solo objeto |
+| `src/components/CharacterCard.test.tsx` | Datos mostrados, enlace al detalle y color del indicador por estado |
+| `src/components/Pagination.test.tsx` | Primera página, página intermedia, última página y una sola página |
+| `src/app/page.test.tsx` | Página principal (Server Component async): parámetro `page`, valor por defecto y parámetro repetido |
+| `src/app/character/[id]/page.test.tsx` | Detalle: datos, episodios, fecha, `type` vacío, estados y enlace de regreso |
+| `src/app/error.test.tsx` | Mensaje de error, `console.error` y botón *Try again* (`reset`) |
+| `src/app/loading.test.tsx` | Esqueletos de carga |
+| `src/app/layout.test.tsx` | Metadata, navegación, footer y fuentes (con `next/font` simulado) |
+
+### Cobertura
+
+Umbral mínimo configurado en `vitest.config.ts`: **80%** en statements, branches, functions y lines (si baja de eso, el comando falla).
+
+Resultado actual: **42 tests en verde** — Statements 100%, Branches 96.55%, Functions 100%, Lines 100%.
+
+El reporte HTML está en [`coverage/index.html`](coverage/index.html) (se regenera con `npx vitest run --coverage`).
+
+![Cobertura en consola](docs/coverage-consola.png)
